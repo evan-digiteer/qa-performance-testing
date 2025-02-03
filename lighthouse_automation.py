@@ -8,7 +8,12 @@ import time
 def run_lighthouse(url, output_dir, device_type):
     """Run Lighthouse for a specific URL and device type"""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_name = f"report_{device_type}_{timestamp}"
+    
+    # Extract webpage name from URL
+    webpage_name = url.replace('https://', '').replace('http://', '').replace('www.', '')
+    webpage_name = webpage_name.replace('/', '_').rstrip('_')
+    
+    report_name = f"{webpage_name}_{device_type}_{timestamp}"
     device_dir = os.path.join(output_dir, device_type)
     os.makedirs(device_dir, exist_ok=True)
     
