@@ -2,47 +2,79 @@ import json
 import os
 import subprocess
 from datetime import datetime
-import pandas as pd
 from utils import save_report, create_summary
+import time
 
-def run_lighthouse(url, output_dir):
-    """Run Lighthouse for a specific URL"""
+def run_lighthouse(url, output_dir, device_type):
+    """Run Lighthouse for a specific URL and device type"""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_name = f"lighthouse_{timestamp}"
+    report_name = f"report_{device_type}_{timestamp}"
+    device_dir = os.path.join(output_dir, device_type)
+    os.makedirs(device_dir, exist_ok=True)
     
-    command = f"lighthouse {url} --output=json,html --output-path={output_dir}/{report_name} --chrome-flags='--headless'"
+    output_path = os.path.join(device_dir, report_name)
+    
+    # Base command parts
+    command_parts = [
+        'lighthouse',
+        url,
+        '--output=json,html',
+        f'--output-path="{output_path}"',
+        '--chrome-flags="--headless"'
+    ]
+    
+    # Add device-specific settings
+    if device_type == 'mobile':
+        command_parts.extend([
+            '--preset=perf',
+            '--emulated-form-factor=mobile',
+            '--throttling.cpuSlowdownMultiplier=4',
+            '--throttling-method=simulate'
+        ])
+    else:  # desktop
+        command_parts.extend([
+            '--preset=desktop',
+            '--emulated-form-factor=desktop',
+            '--throttling.cpuSlowdownMultiplier=1',
+            '--throttling-method=simulate'
+        ])
+    
+    command = ' '.join(command_parts)
     
     try:
+        print(f"Running Lighthouse for {url} ({device_type})...")
         subprocess.run(command, shell=True, check=True)
-        return f"{report_name}.report.json"
+        time.sleep(2)  # Wait for files to be written
+        
+        json_file = f"{output_path}.report.json"
+        if os.path.exists(json_file):
+            return json_file
+        return None
+            
     except subprocess.CalledProcessError as e:
-        print(f"Error running Lighthouse for {url}: {e}")
+        print(f"Error running Lighthouse: {e}")
         return None
 
 def main():
-    # Create output directory
     base_dir = os.path.dirname(os.path.abspath(__file__))
     output_dir = os.path.join(base_dir, "reports")
     os.makedirs(output_dir, exist_ok=True)
 
-    # Load configuration
-    with open("config.json", "r") as f:
-        config = json.load(f)
-
+    urls = ["https://www.example.com"]
+    device_types = ["desktop", "mobile"]
+    
     results = []
-    for url in config["urls"]:
-        print(f"Testing {url}...")
-        report_file = run_lighthouse(url, output_dir)
-        
-        if report_file:
-            report_path = os.path.join(output_dir, report_file)
-            result = save_report(report_path, url)
-            results.append(result)
+    for url in urls:
+        for device_type in device_types:
+            json_path = run_lighthouse(url, output_dir, device_type)
+            if json_path and os.path.exists(json_path):
+                result = save_report(json_path, url, device_type)
+                results.append(result)
+                print(f"Report saved: {json_path}")
 
-    # Create summary
     if results:
         summary_file = create_summary(results, output_dir)
-        print(f"Summary saved to {summary_file}")
+        print(f"\nSummary saved to {summary_file}")
 
 if __name__ == "__main__":
     main()
