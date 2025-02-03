@@ -1,0 +1,13 @@
+{
+    "urls": [
+        "https://www.example.com",
+        "https://www.example.com/about",
+        "https://www.example.com/contact"
+    ],
+    "lighthouse_flags": {
+        "output": ["json", "html"],
+        "chrome-flags": "--headless",
+        "form-factor": "desktop",
+        "throttling-method": "simulate"
+    }
+}
