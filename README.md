@@ -46,6 +46,19 @@ The script will:
 
 ## Output
 
-- Individual HTML reports for each URL
-- JSON reports with detailed metrics
-- Summary CSV file with key metrics across all URLs
+Reports are organized in the following structure:
+```
+reports/
+├── desktop/
+│   ├── example.com_desktop_20231025_120101.report.html
+│   └── example.com_desktop_20231025_120101.report.json
+├── mobile/
+│   ├── example.com_mobile_20231025_120201.report.html
+│   └── example.com_mobile_20231025_120201.report.json
+└── summary_20231025_120301.csv
+```
+
+Each report includes:
+- Mobile and desktop versions
+- Performance metrics for each device type
+- Consolidated CSV summary comparing both versions
