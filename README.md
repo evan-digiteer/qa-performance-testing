@@ -15,7 +15,12 @@ This project automates Google Lighthouse testing for multiple URLs and generates
 npm install -g lighthouse
 ```
 
-2. Install Python dependencies:
+2. Install pandas first:
+```bash
+pip install --only-binary :all: pandas
+```
+
+3. Install remaining Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
