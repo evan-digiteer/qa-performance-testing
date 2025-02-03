@@ -1,13 +1,15 @@
 {
     "urls": [
-        "https://www.example.com",
-        "https://www.example.com/about",
-        "https://www.example.com/contact"
+        "https://www.example.com"
     ],
-    "lighthouse_flags": {
-        "output": ["json", "html"],
-        "chrome-flags": "--headless",
-        "form-factor": "desktop",
-        "throttling-method": "simulate"
+    "configurations": {
+        "desktop": {
+            "preset": "desktop",
+            "form-factor": "desktop"
+        },
+        "mobile": {
+            "preset": "mobile",
+            "form-factor": "mobile"
+        }
     }
 }
