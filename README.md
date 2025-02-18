@@ -1,64 +1,76 @@
-# Lighthouse Automation Project
+# Lighthouse Performance Testing Automation
 
-This project automates Google Lighthouse testing for multiple URLs and generates reports.
+Automated performance testing tool using Google Lighthouse for multiple URLs across different environments and device types.
 
 ## Prerequisites
 
-- Python 3.8+
-- Node.js and npm (for Lighthouse)
-- Google Chrome
+- Node.js (for Lighthouse)
+- Python 3.x
+- Chrome browser
 
-## Installation
+## Setup
 
 1. Install Lighthouse globally:
 ```bash
 npm install -g lighthouse
 ```
 
-2. Install pandas first:
-```bash
-pip install --only-binary :all: pandas
-```
-
-3. Install remaining Python dependencies:
+2. Install Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Configuration
 
-Edit `config.json` to specify:
-- URLs to test
-- Lighthouse configuration flags
+### Main Configuration (config.json)
+- Located in `config.json`
+- Controls device configurations and active environment
+- Example:
+```json
+{
+    "configurations": {
+        "desktop": {
+            "preset": "desktop",
+            "form-factor": "desktop"
+        },
+        "mobile": {
+            "preset": "mobile",
+            "form-factor": "mobile"
+        }
+    },
+    "activeEnv": "staging"
+}
+```
+
+### Environment Configuration
+- Located in `env/` directory
+- Separate files for different environments (staging.json, production.json)
+- Contains URLs to test for each environment
 
 ## Usage
 
-Run the automation script:
+1. Select environment by updating `activeEnv` in config.json
+2. Run the script:
 ```bash
 python lighthouse_automation.py
 ```
 
-The script will:
-1. Create a `reports` directory
-2. Run Lighthouse tests for each URL
-3. Generate HTML and JSON reports
-4. Create a CSV summary of all results
-
 ## Output
 
-Reports are organized in the following structure:
+- Reports are saved in the `reports/` directory
+- Organized by device type (desktop/mobile)
+- Each report includes:
+  - HTML report
+  - JSON data
+  - Summary of all tests
+
+## Report Structure
+
 ```
 reports/
 ├── desktop/
-│   ├── example.com_desktop_20231025_120101.report.html
-│   └── example.com_desktop_20231025_120101.report.json
+│   └── [webpage]_desktop_[timestamp].report.html
 ├── mobile/
-│   ├── example.com_mobile_20231025_120201.report.html
-│   └── example.com_mobile_20231025_120201.report.json
-└── summary_20231025_120301.csv
+│   └── [webpage]_mobile_[timestamp].report.html
+└── summary_[timestamp].json
 ```
-
-Each report includes:
-- Mobile and desktop versions
-- Performance metrics for each device type
-- Consolidated CSV summary comparing both versions
