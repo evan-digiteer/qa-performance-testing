@@ -1,7 +1,4 @@
 {
-    "urls": [
-        "https://www.example.com"
-    ],
     "configurations": {
         "desktop": {
             "preset": "desktop",
@@ -11,5 +8,6 @@
             "preset": "mobile",
             "form-factor": "mobile"
         }
-    }
+    },
+    "activeEnv": "staging"
 }

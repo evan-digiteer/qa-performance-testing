@@ -5,6 +5,22 @@ from datetime import datetime
 from utils import save_report, create_summary
 import time
 
+def load_config():
+    """Load main configuration and environment-specific URLs"""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Load main config
+    with open(os.path.join(base_dir, 'config.json'), 'r') as f:
+        config = json.load(f)
+    
+    # Load environment-specific config
+    env = config.get('activeEnv', 'production')
+    env_file = os.path.join(base_dir, 'env', f'{env}.json')
+    with open(env_file, 'r') as f:
+        env_config = json.load(f)
+    
+    return config, env_config['urls']
+
 def run_lighthouse(url, output_dir, device_type):
     """Run Lighthouse for a specific URL and device type"""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -65,8 +81,9 @@ def main():
     output_dir = os.path.join(base_dir, "reports")
     os.makedirs(output_dir, exist_ok=True)
 
-    urls = ["https://www.example.com"]
-    device_types = ["desktop", "mobile"]
+    # Load configuration and URLs
+    config, urls = load_config()
+    device_types = config['configurations'].keys()
     
     results = []
     for url in urls:
